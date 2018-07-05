@@ -53,6 +53,15 @@ ngx_uint_t    ngx_noaccepting;
 ngx_uint_t    ngx_restart;
 
 
+<<<<<<< HEAD
+=======
+#if (NGX_THREADS)
+volatile ngx_thread_t  ngx_threads[NGX_MAX_THREADS];
+ngx_int_t              ngx_threads_n;
+#endif
+
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 static u_char  master_process[] = "master process";
 
 
@@ -728,6 +737,12 @@ static void
 ngx_worker_process_cycle(ngx_cycle_t *cycle, void *data)
 {
     ngx_int_t worker = (intptr_t) data;
+<<<<<<< HEAD
+=======
+
+    ngx_uint_t         i;
+    ngx_connection_t  *c;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     ngx_process = NGX_PROCESS_WORKER;
     ngx_worker = worker;
@@ -781,6 +796,7 @@ static void
 ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
 {
     sigset_t          set;
+    uint64_t          cpu_affinity;
     ngx_int_t         n;
     ngx_time_t       *tp;
     ngx_uint_t        i;

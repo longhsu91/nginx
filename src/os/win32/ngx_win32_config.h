@@ -20,11 +20,14 @@
 /* enable getenv() and gmtime() in msvc8 */
 #define _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_DEPRECATE
+<<<<<<< HEAD
 
 /* enable gethostbyname() in msvc2015 */
 #if !(NGX_HAVE_INET6)
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #endif
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 /*
  * we need to include <windows.h> explicitly before <winsock2.h> because

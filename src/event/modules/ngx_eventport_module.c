@@ -19,8 +19,11 @@
 #define CLOCK_REALTIME          0
 typedef int     clockid_t;
 typedef void *  timer_t;
+<<<<<<< HEAD
 #elif (NGX_DARWIN)
 typedef void *  timer_t;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 #endif
 
 /* Solaris declarations */
@@ -95,6 +98,7 @@ int port_getn(int port, port_event_t list[], uint_t max, uint_t *nget,
     return -1;
 }
 
+<<<<<<< HEAD
 int port_send(int port, int events, void *user);
 
 int port_send(int port, int events, void *user)
@@ -102,6 +106,8 @@ int port_send(int port, int events, void *user)
     return -1;
 }
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 int timer_create(clockid_t clock_id, struct sigevent *evp, timer_t *timerid);
 

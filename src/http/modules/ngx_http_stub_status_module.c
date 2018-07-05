@@ -148,7 +148,10 @@ ngx_http_stub_status_handler(ngx_http_request_t *r)
     r->headers_out.content_length_n = b->last - b->pos;
 
     b->last_buf = (r == r->main) ? 1 : 0;
+<<<<<<< HEAD
     b->last_in_chain = 1;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     rc = ngx_http_send_header(r);
 

@@ -193,11 +193,16 @@ ngx_http_write_filter(ngx_http_request_t *r, ngx_chain_t *in)
         return NGX_AGAIN;
     }
 
+<<<<<<< HEAD
     if (size == 0
         && !(c->buffered & NGX_LOWLEVEL_BUFFERED)
         && !(last && c->need_last_buf))
     {
         if (last || flush || sync) {
+=======
+    if (size == 0 && !(c->buffered & NGX_LOWLEVEL_BUFFERED)) {
+        if (last || flush) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             for (cl = r->out; cl; /* void */) {
                 ln = cl;
                 cl = cl->next;
@@ -219,12 +224,17 @@ ngx_http_write_filter(ngx_http_request_t *r, ngx_chain_t *in)
     }
 
     if (r->limit_rate) {
+<<<<<<< HEAD
         if (r->limit_rate_after == 0) {
             r->limit_rate_after = clcf->limit_rate_after;
         }
 
         limit = (off_t) r->limit_rate * (ngx_time() - r->start_sec + 1)
                 - (c->sent - r->limit_rate_after);
+=======
+        limit = (off_t) r->limit_rate * (ngx_time() - r->start_sec + 1)
+                - (c->sent - clcf->limit_rate_after);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         if (limit <= 0) {
             c->write->delayed = 1;

@@ -6,9 +6,15 @@ TEMP =		tmp
 
 CC =		cl
 OBJS =		objs.msvc8
+<<<<<<< HEAD
 OPENSSL =	openssl-1.0.2o
 ZLIB =		zlib-1.2.11
 PCRE =		pcre-8.42
+=======
+OPENSSL =	openssl-1.0.1e
+ZLIB =		zlib-1.2.7
+PCRE =		pcre-8.32
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 
 release: export
@@ -36,6 +42,7 @@ release: export
 
 export:
 	rm -rf $(TEMP)
+<<<<<<< HEAD
 	hg archive -X '.hg*' $(TEMP)/$(NGINX)
 
 
@@ -44,11 +51,52 @@ RELEASE:
 	hg tag -m "release-$(VER) tag" release-$(VER)
 
 	$(MAKE) -f misc/GNUmakefile release
+=======
+
+	if [ -d .svn ]; then						\
+		svn export -rHEAD . $(TEMP)/$(NGINX);			\
+	else								\
+		hg archive -X '.hg*' $(TEMP)/$(NGINX);			\
+	fi
+
+
+RELEASE:
+	if [ -d .svn ]; then						\
+		$(MAKE) -f misc/GNUmakefile RELEASE.svn;		\
+	else								\
+		$(MAKE) -f misc/GNUmakefile RELEASE.hg;			\
+	fi
+
+	$(MAKE) -f misc/GNUmakefile release
+
+
+RELEASE.hg:
+	hg ci -m nginx-$(VER)-RELEASE
+	hg tag -m "release-$(VER) tag" release-$(VER)
+
+	
+RELEASE.svn:
+	test -d $(TEMP) || mkdir -p $(TEMP)
+
+	echo "nginx-$(VER)-RELEASE" > $(TEMP)/message
+	svn ci -F $(TEMP)/message
+
+	echo "release-$(VER) tag" > $(TEMP)/message
+	svn copy $(REPO)/branches/stable-1.2				\
+		$(REPO)/tags/release-$(VER)				\
+		-F $(TEMP)/message
+
+	svn up
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 
 win32:
 	./auto/configure						\
+<<<<<<< HEAD
 		--with-cc=$(CC)						\
+=======
+		--with-cc=cl						\
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 		--builddir=$(OBJS)					\
 		--with-debug						\
 		--prefix= 						\
@@ -66,7 +114,10 @@ win32:
 		--with-pcre=$(OBJS)/lib/$(PCRE)				\
 		--with-zlib=$(OBJS)/lib/$(ZLIB)				\
 		--with-select_module					\
+<<<<<<< HEAD
 		--with-http_v2_module					\
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 		--with-http_realip_module				\
 		--with-http_addition_module				\
 		--with-http_sub_module					\
@@ -74,6 +125,7 @@ win32:
 		--with-http_stub_status_module				\
 		--with-http_flv_module					\
 		--with-http_mp4_module					\
+<<<<<<< HEAD
 		--with-http_gunzip_module				\
 		--with-http_gzip_static_module				\
 		--with-http_auth_request_module				\
@@ -87,6 +139,17 @@ win32:
 		--with-http_ssl_module					\
 		--with-mail_ssl_module					\
 		--with-stream_ssl_module
+=======
+		--with-http_gzip_static_module				\
+		--with-http_random_index_module				\
+		--with-http_secure_link_module				\
+		--with-mail						\
+		--with-openssl=$(OBJS)/lib/$(OPENSSL)			\
+		--with-openssl-opt=enable-tlsext			\
+		--with-http_ssl_module					\
+		--with-mail_ssl_module					\
+		--with-ipv6
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 
 zip: export

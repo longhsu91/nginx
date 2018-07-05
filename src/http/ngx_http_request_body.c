@@ -34,7 +34,11 @@ ngx_http_read_client_request_body(ngx_http_request_t *r,
     ssize_t                    size;
     ngx_int_t                  rc;
     ngx_buf_t                 *b;
+<<<<<<< HEAD
     ngx_chain_t                out;
+=======
+    ngx_chain_t               *cl, **next;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_http_request_body_t   *rb;
     ngx_http_core_loc_conf_t  *clcf;
 
@@ -55,6 +59,7 @@ ngx_http_read_client_request_body(ngx_http_request_t *r,
     if (rb == NULL) {
         rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
         goto done;
+<<<<<<< HEAD
     }
 
     /*
@@ -71,6 +76,27 @@ ngx_http_read_client_request_body(ngx_http_request_t *r,
     rb->post_handler = post_handler;
 
     r->request_body = rb;
+=======
+    }
+
+    r->request_body = rb;
+
+    if (r->headers_in.content_length_n < 0) {
+        post_handler(r);
+        return NGX_OK;
+    }
+
+    clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
+
+    if (r->headers_in.content_length_n == 0) {
+
+        if (r->request_body_in_file_only) {
+            if (ngx_http_write_request_body(r, NULL) != NGX_OK) {
+                rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
+                goto done;
+            }
+        }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     if (r->headers_in.content_length_n < 0 && !r->headers_in.chunked) {
         r->request_body_no_buffering = 0;
@@ -94,12 +120,26 @@ ngx_http_read_client_request_body(ngx_http_request_t *r,
         ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                        "http client request body preread %uz", preread);
 
+<<<<<<< HEAD
         out.buf = r->header_in;
         out.next = NULL;
+=======
+        b = ngx_calloc_buf(r->pool);
+        if (b == NULL) {
+            rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
+            goto done;
+        }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         rc = ngx_http_request_body_filter(r, &out);
 
+<<<<<<< HEAD
         if (rc != NGX_OK) {
+=======
+        rb->bufs = ngx_alloc_chain_link(r->pool);
+        if (rb->bufs == NULL) {
+            rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             goto done;
         }
 
@@ -111,10 +151,18 @@ ngx_http_read_client_request_body(ngx_http_request_t *r,
         {
             /* the whole request body may be placed in r->header_in */
 
+<<<<<<< HEAD
             b = ngx_calloc_buf(r->pool);
             if (b == NULL) {
                 rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
                 goto done;
+=======
+            if (r->request_body_in_file_only) {
+                if (ngx_http_write_request_body(r, rb->bufs) != NGX_OK) {
+                    rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
+                    goto done;
+                }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             }
 
             b->temporary = 1;
@@ -135,8 +183,12 @@ ngx_http_read_client_request_body(ngx_http_request_t *r,
     } else {
         /* set rb->rest */
 
+<<<<<<< HEAD
         if (ngx_http_request_body_filter(r, NULL) != NGX_OK) {
             rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
+=======
+            rc = ngx_http_do_read_client_request_body(r);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             goto done;
         }
     }
@@ -179,10 +231,18 @@ ngx_http_read_client_request_body(ngx_http_request_t *r,
         goto done;
     }
 
+<<<<<<< HEAD
     r->read_event_handler = ngx_http_read_client_request_body_handler;
     r->write_event_handler = ngx_http_request_empty_handler;
 
     rc = ngx_http_do_read_client_request_body(r);
+=======
+    cl = ngx_alloc_chain_link(r->pool);
+    if (cl == NULL) {
+        rc = NGX_HTTP_INTERNAL_SERVER_ERROR;
+        goto done;
+    }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 done:
 
@@ -237,6 +297,17 @@ ngx_http_read_unbuffered_request_body(ngx_http_request_t *r)
         r->reading_body = 0;
     }
 
+<<<<<<< HEAD
+=======
+    rc = ngx_http_do_read_client_request_body(r);
+
+done:
+
+    if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+        r->main->count--;
+    }
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     return rc;
 }
 
@@ -462,7 +533,11 @@ ngx_http_write_request_body(ngx_http_request_t *r)
 
         rb->temp_file = tf;
 
+<<<<<<< HEAD
         if (rb->bufs == NULL) {
+=======
+        if (body == NULL) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             /* empty body with r->request_body_in_file_only */
 
             if (ngx_create_temp_file(&tf->file, tf->path, tf->pool,
@@ -474,10 +549,13 @@ ngx_http_write_request_body(ngx_http_request_t *r)
 
             return NGX_OK;
         }
+<<<<<<< HEAD
     }
 
     if (rb->bufs == NULL) {
         return NGX_OK;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
 
     n = ngx_write_chain_to_temp_file(rb->temp_file, rb->bufs);
@@ -555,18 +633,26 @@ ngx_http_discard_request_body(ngx_http_request_t *r)
         }
     }
 
+<<<<<<< HEAD
     rc = ngx_http_read_discarded_request_body(r);
 
     if (rc == NGX_OK) {
+=======
+    if (ngx_http_read_discarded_request_body(r) == NGX_OK) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         r->lingering_close = 0;
         return NGX_OK;
     }
 
+<<<<<<< HEAD
     if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
         return rc;
     }
 
     /* rc == NGX_AGAIN */
+=======
+    /* == NGX_AGAIN */
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     r->read_event_handler = ngx_http_discarded_request_body_handler;
 

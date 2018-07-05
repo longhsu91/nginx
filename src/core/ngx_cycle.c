@@ -115,13 +115,19 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
     n = old_cycle->paths.nelts ? old_cycle->paths.nelts : 10;
 
+<<<<<<< HEAD
     if (ngx_array_init(&cycle->paths, pool, n, sizeof(ngx_path_t *))
         != NGX_OK)
     {
+=======
+    cycle->paths.elts = ngx_pcalloc(pool, n * sizeof(ngx_path_t *));
+    if (cycle->paths.elts == NULL) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         ngx_destroy_pool(pool);
         return NULL;
     }
 
+<<<<<<< HEAD
     ngx_memzero(cycle->paths.elts, n * sizeof(ngx_path_t *));
 
 
@@ -131,6 +137,12 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         ngx_destroy_pool(pool);
         return NULL;
     }
+=======
+    cycle->paths.nelts = 0;
+    cycle->paths.size = sizeof(ngx_path_t *);
+    cycle->paths.nalloc = n;
+    cycle->paths.pool = pool;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     ngx_rbtree_init(&cycle->config_dump_rbtree, &cycle->config_dump_sentinel,
                     ngx_str_rbtree_insert_value);
@@ -453,8 +465,12 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
             }
 
             if (shm_zone[i].tag == oshm_zone[n].tag
+<<<<<<< HEAD
                 && shm_zone[i].shm.size == oshm_zone[n].shm.size
                 && !shm_zone[i].noreuse)
+=======
+                && shm_zone[i].shm.size == oshm_zone[n].shm.size)
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             {
                 shm_zone[i].shm.addr = oshm_zone[n].shm.addr;
 #if (NGX_WIN32)
@@ -1250,10 +1266,13 @@ ngx_shared_memory_add(ngx_conf_t *cf, ngx_str_t *name, size_t size, void *tag)
             return NULL;
         }
 
+<<<<<<< HEAD
         if (shm_zone[i].shm.size == 0) {
             shm_zone[i].shm.size = size;
         }
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         if (size && size != shm_zone[i].shm.size) {
             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                             "the size %uz of shared memory zone \"%V\" "

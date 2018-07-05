@@ -16,8 +16,11 @@ WriteMakefile(
     CCFLAGS           => "$ENV{NGX_PM_CFLAGS}",
     OPTIMIZE          => '-O',
 
+<<<<<<< HEAD
     LDDLFLAGS         => "$ENV{NGX_PM_LDFLAGS}",
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     INC               => join(" ", map {
                              m#^/# ? "-I $_" : "-I ../../../../../$_"
                          } (split /\s+/, $ENV{NGX_INCS})),

@@ -13,6 +13,10 @@
 static ngx_int_t ngx_conf_add_dump(ngx_conf_t *cf, ngx_str_t *filename);
 static ngx_int_t ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last);
 static ngx_int_t ngx_conf_read_token(ngx_conf_t *cf);
+<<<<<<< HEAD
+=======
+static ngx_int_t ngx_conf_test_full_name(ngx_str_t *name);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 static void ngx_conf_flush_files(ngx_cycle_t *cycle);
 
 
@@ -365,9 +369,15 @@ ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
 
     found = 0;
 
+<<<<<<< HEAD
     for (i = 0; cf->cycle->modules[i]; i++) {
 
         cmd = cf->cycle->modules[i]->commands;
+=======
+    for (i = 0; ngx_modules[i]; i++) {
+
+        cmd = ngx_modules[i]->commands;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         if (cmd == NULL) {
             continue;
         }
@@ -384,8 +394,13 @@ ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
 
             found = 1;
 
+<<<<<<< HEAD
             if (cf->cycle->modules[i]->type != NGX_CONF_MODULE
                 && cf->cycle->modules[i]->type != cf->module_type)
+=======
+            if (ngx_modules[i]->type != NGX_CONF_MODULE
+                && ngx_modules[i]->type != cf->module_type)
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             {
                 continue;
             }

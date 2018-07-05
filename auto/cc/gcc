@@ -144,11 +144,21 @@ CFLAGS="$CFLAGS -Wall -Wpointer-arith"
 #CFLAGS="$CFLAGS -Wconversion"
 #CFLAGS="$CFLAGS -Winline"
 #CFLAGS="$CFLAGS -Wmissing-prototypes"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 case "$NGX_GCC_VER" in
     2.*)
         # we have a lot of the unused function arguments
+<<<<<<< HEAD
         CFLAGS="$CFLAGS -Wno-unused"
+=======
+        CFLAGS="$CFLAGS -Wno-unused-parameter"
+        # 4.2.1 shows the warning in wrong places
+        #CFLAGS="$CFLAGS -Wunreachable-code"
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ;;
 
     *)

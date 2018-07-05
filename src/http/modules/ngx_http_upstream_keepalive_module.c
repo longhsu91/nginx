@@ -499,9 +499,24 @@ ngx_http_upstream_keepalive(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ngx_int_t    n;
     ngx_str_t   *value;
 
+<<<<<<< HEAD
     if (kcf->max_cached) {
         return "is duplicate";
     }
+=======
+    kcf = ngx_http_conf_upstream_srv_conf(uscf,
+                                          ngx_http_upstream_keepalive_module);
+
+    if (kcf->original_init_upstream) {
+        return "is duplicate";
+    }
+
+    kcf->original_init_upstream = uscf->peer.init_upstream
+                                  ? uscf->peer.init_upstream
+                                  : ngx_http_upstream_init_round_robin;
+
+    uscf->peer.init_upstream = ngx_http_upstream_init_keepalive;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     /* read options */
 
@@ -520,9 +535,17 @@ ngx_http_upstream_keepalive(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     uscf = ngx_http_conf_get_module_srv_conf(cf, ngx_http_upstream_module);
 
+<<<<<<< HEAD
     kcf->original_init_upstream = uscf->peer.init_upstream
                                   ? uscf->peer.init_upstream
                                   : ngx_http_upstream_init_round_robin;
+=======
+        if (ngx_strcmp(value[i].data, "single") == 0) {
+            ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
+                               "the \"single\" parameter is deprecated");
+            continue;
+        }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     uscf->peer.init_upstream = ngx_http_upstream_init_keepalive;
 

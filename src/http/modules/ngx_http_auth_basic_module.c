@@ -15,6 +15,14 @@
 
 
 typedef struct {
+<<<<<<< HEAD
+=======
+    ngx_str_t                 passwd;
+} ngx_http_auth_basic_ctx_t;
+
+
+typedef struct {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_http_complex_value_t  *realm;
     ngx_http_complex_value_t   user_file;
 } ngx_http_auth_basic_loc_conf_t;
@@ -109,6 +117,8 @@ ngx_http_auth_basic_handler(ngx_http_request_t *r)
     alcf = ngx_http_get_module_loc_conf(r, ngx_http_auth_basic_module);
 
     if (alcf->realm == NULL || alcf->user_file.value.data == NULL) {
+<<<<<<< HEAD
+=======
         return NGX_DECLINED;
     }
 
@@ -117,7 +127,22 @@ ngx_http_auth_basic_handler(ngx_http_request_t *r)
     }
 
     if (realm.len == 3 && ngx_strncmp(realm.data, "off", 3) == 0) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         return NGX_DECLINED;
+    }
+
+    if (ngx_http_complex_value(r, alcf->realm, &realm) != NGX_OK) {
+        return NGX_ERROR;
+    }
+
+<<<<<<< HEAD
+    if (realm.len == 3 && ngx_strncmp(realm.data, "off", 3) == 0) {
+        return NGX_DECLINED;
+=======
+    if (ctx) {
+        return ngx_http_auth_basic_crypt_handler(r, ctx, &ctx->passwd,
+                                                 &realm);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
 
     rc = ngx_http_auth_basic_user(r);
@@ -224,7 +249,12 @@ ngx_http_auth_basic_handler(ngx_http_request_t *r)
                     pwd.len = i - passwd;
                     pwd.data = &buf[passwd];
 
+<<<<<<< HEAD
                     return ngx_http_auth_basic_crypt_handler(r, &pwd, &realm);
+=======
+                    return ngx_http_auth_basic_crypt_handler(r, NULL, &pwd,
+                                                             &realm);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
                 }
 
                 break;
@@ -262,7 +292,11 @@ ngx_http_auth_basic_handler(ngx_http_request_t *r)
 
         ngx_cpystrn(pwd.data, &buf[passwd], pwd.len + 1);
 
+<<<<<<< HEAD
         return ngx_http_auth_basic_crypt_handler(r, &pwd, &realm);
+=======
+        return ngx_http_auth_basic_crypt_handler(r, NULL, &pwd, &realm);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
 
     ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
@@ -321,8 +355,11 @@ ngx_http_auth_basic_set_realm(ngx_http_request_t *r, ngx_str_t *realm)
 
     basic = ngx_pnalloc(r->pool, len);
     if (basic == NULL) {
+<<<<<<< HEAD
         r->headers_out.www_authenticate->hash = 0;
         r->headers_out.www_authenticate = NULL;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         return NGX_HTTP_INTERNAL_SERVER_ERROR;
     }
 

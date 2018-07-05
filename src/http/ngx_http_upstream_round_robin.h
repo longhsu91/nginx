@@ -72,6 +72,11 @@ struct ngx_http_upstream_rr_peers_s {
     unsigned                        single:1;
     unsigned                        weighted:1;
 
+    ngx_uint_t                      total_weight;
+
+    unsigned                        single:1;
+    unsigned                        weighted:1;
+
     ngx_str_t                      *name;
 
     ngx_http_upstream_rr_peers_t   *next;

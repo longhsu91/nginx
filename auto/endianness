@@ -4,6 +4,7 @@
 
 
 echo $ngx_n "checking for system byte ordering ...$ngx_c"
+<<<<<<< HEAD:auto/endianness
 
 cat << END >> $NGX_AUTOCONF_ERR
 
@@ -11,6 +12,10 @@ cat << END >> $NGX_AUTOCONF_ERR
 checking for system byte ordering
 
 END
+=======
+echo >> $NGX_ERR
+echo "checking for system byte ordering" >> $NGX_ERR
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9:auto/endianness
 
 
 cat << END > $NGX_AUTOTEST.c

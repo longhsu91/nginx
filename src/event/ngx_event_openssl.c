@@ -141,8 +141,11 @@ ngx_ssl_init(ngx_log_t *log)
 
     OpenSSL_add_all_algorithms();
 
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 #if OPENSSL_VERSION_NUMBER >= 0x0090800fL
 #ifndef SSL_OP_NO_COMPRESSION
     {
@@ -1668,6 +1671,7 @@ ngx_ssl_send_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
             }
 
             in->buf->pos += n;
+            c->sent += n;
 
             if (in->buf->pos == in->buf->last) {
                 in = in->next;
@@ -2528,7 +2532,11 @@ ngx_ssl_new_session(ngx_ssl_conn_t *ssl_conn, ngx_ssl_session_t *sess)
 
 #else
 
+<<<<<<< HEAD
     id = ngx_slab_alloc_locked(shpool, session_id_length);
+=======
+    id = ngx_slab_alloc_locked(shpool, sess->session_id_length);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     if (id == NULL) {
 
@@ -2536,7 +2544,11 @@ ngx_ssl_new_session(ngx_ssl_conn_t *ssl_conn, ngx_ssl_session_t *sess)
 
         ngx_ssl_expire_sessions(cache, shpool, 0);
 
+<<<<<<< HEAD
         id = ngx_slab_alloc_locked(shpool, session_id_length);
+=======
+        id = ngx_slab_alloc_locked(shpool, sess->session_id_length);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         if (id == NULL) {
             goto failed;

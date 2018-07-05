@@ -493,6 +493,7 @@ ngx_thread_write_chain_to_file(ngx_file_t *file, ngx_chain_t *cl, off_t offset,
             return NGX_ERROR;
         }
 
+<<<<<<< HEAD
         file->thread_task = task;
     }
 
@@ -537,6 +538,15 @@ static void
 ngx_thread_write_chain_to_file_handler(void *data, ngx_log_t *log)
 {
     ngx_thread_file_ctx_t *ctx = data;
+=======
+        ngx_log_debug2(NGX_LOG_DEBUG_CORE, file->log, 0,
+                       "writev: %d, %z", file->fd, n);
+
+        file->sys_offset += n;
+        file->offset += n;
+        offset += n;
+        total += n;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 #if (NGX_HAVE_PWRITEV)
 

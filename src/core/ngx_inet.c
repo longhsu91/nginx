@@ -691,7 +691,11 @@ ngx_parse_url(ngx_pool_t *pool, ngx_url_t *u)
         return ngx_parse_unix_domain_url(pool, u);
     }
 
+<<<<<<< HEAD
     if (len && p[0] == '[') {
+=======
+    if (p[0] == '[') {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         return ngx_parse_inet6_url(pool, u);
     }
 
@@ -937,6 +941,7 @@ ngx_parse_inet_url(ngx_pool_t *pool, ngx_url_t *u)
         return NGX_OK;
     }
 
+<<<<<<< HEAD
     if (ngx_inet_resolve_host(pool, u) != NGX_OK) {
         return NGX_ERROR;
     }
@@ -969,6 +974,9 @@ ngx_parse_inet_url(ngx_pool_t *pool, ngx_url_t *u)
     }
 
     return NGX_OK;
+=======
+    return ngx_inet_resolve_host(pool, u);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 }
 
 
@@ -1009,8 +1017,16 @@ ngx_parse_inet6_url(ngx_pool_t *pool, ngx_url_t *u)
         u->uri.len = last - uri;
         u->uri.data = uri;
 
+<<<<<<< HEAD
         last = uri;
     }
+=======
+            u->uri.len = last - uri;
+            u->uri.data = uri;
+
+            last = uri;
+        }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     if (port < last) {
         if (*port != ':') {
@@ -1020,9 +1036,13 @@ ngx_parse_inet6_url(ngx_pool_t *pool, ngx_url_t *u)
 
         port++;
 
+<<<<<<< HEAD
         len = last - port;
 
         n = ngx_atoi(port, len);
+=======
+            n = ngx_atoi(port, len);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         if (n < 1 || n > 65535) {
             u->err = "invalid port";
@@ -1060,6 +1080,11 @@ ngx_parse_inet6_url(ngx_pool_t *pool, ngx_url_t *u)
         u->wildcard = 1;
     }
 
+    if (u->no_port) {
+        u->port = u->default_port;
+        sin6->sin6_port = htons(u->default_port);
+    }
+
     u->family = AF_INET6;
     u->naddrs = 1;
 
@@ -1073,7 +1098,11 @@ ngx_parse_inet6_url(ngx_pool_t *pool, ngx_url_t *u)
         return NGX_ERROR;
     }
 
+<<<<<<< HEAD
     ngx_memcpy(sin6, &u->sockaddr, sizeof(struct sockaddr_in6));
+=======
+    ngx_memcpy(sin6, u->sockaddr, sizeof(struct sockaddr_in6));
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     u->addrs[0].sockaddr = (struct sockaddr *) sin6;
     u->addrs[0].socklen = sizeof(struct sockaddr_in6);

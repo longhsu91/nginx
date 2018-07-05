@@ -25,10 +25,13 @@ static char *ngx_set_cpu_affinity(ngx_conf_t *cf, ngx_command_t *cmd,
     void *conf);
 static char *ngx_set_worker_processes(ngx_conf_t *cf, ngx_command_t *cmd,
     void *conf);
+<<<<<<< HEAD
 static char *ngx_load_module(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 #if (NGX_HAVE_DLOPEN)
 static void ngx_unload_module(void *data);
 #endif
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 
 static ngx_conf_enum_t  ngx_debug_points[] = {
@@ -1475,7 +1478,11 @@ ngx_set_worker_processes(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         return "is duplicate";
     }
 
+<<<<<<< HEAD
     value = cf->args->elts;
+=======
+    value = (ngx_str_t *) cf->args->elts;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     if (ngx_strcmp(value[1].data, "auto") == 0) {
         ccf->worker_processes = ngx_ncpu;
@@ -1490,6 +1497,7 @@ ngx_set_worker_processes(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     return NGX_CONF_OK;
 }
+<<<<<<< HEAD
 
 
 static char *
@@ -1588,3 +1596,5 @@ ngx_unload_module(void *data)
 }
 
 #endif
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9

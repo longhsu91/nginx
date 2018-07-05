@@ -950,6 +950,8 @@ ngx_http_process_request_line(ngx_event_t *rev)
         ngx_http_close_request(r, NGX_HTTP_REQUEST_TIME_OUT);
         return;
     }
+<<<<<<< HEAD
+=======
 
     rc = NGX_AGAIN;
 
@@ -973,14 +975,114 @@ ngx_http_process_request_line(ngx_event_t *rev)
             r->request_line.data = r->request_start;
             r->request_length = r->header_in->pos - r->request_start;
 
+
+            if (r->args_start) {
+                r->uri.len = r->args_start - 1 - r->uri_start;
+            } else {
+                r->uri.len = r->uri_end - r->uri_start;
+            }
+
+
+            if (r->complex_uri || r->quoted_uri) {
+
+                r->uri.data = ngx_pnalloc(r->pool, r->uri.len + 1);
+                if (r->uri.data == NULL) {
+                    ngx_http_close_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+                    return;
+                }
+
+                cscf = ngx_http_get_module_srv_conf(r, ngx_http_core_module);
+
+                rc = ngx_http_parse_complex_uri(r, cscf->merge_slashes);
+
+                if (rc == NGX_HTTP_PARSE_INVALID_REQUEST) {
+                    ngx_log_error(NGX_LOG_INFO, c->log, 0,
+                                  "client sent invalid request");
+                    ngx_http_finalize_request(r, NGX_HTTP_BAD_REQUEST);
+                    return;
+                }
+
+            } else {
+                r->uri.data = r->uri_start;
+            }
+
+
+            r->unparsed_uri.len = r->uri_end - r->uri_start;
+            r->unparsed_uri.data = r->uri_start;
+
+            r->valid_unparsed_uri = r->space_in_uri ? 0 : 1;
+
+            r->method_name.len = r->method_end - r->request_start + 1;
+            r->method_name.data = r->request_line.data;
+
+
+            if (r->http_protocol.data) {
+                r->http_protocol.len = r->request_end - r->http_protocol.data;
+            }
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
+
+    rc = NGX_AGAIN;
+
+    for ( ;; ) {
+
+        if (rc == NGX_AGAIN) {
+            n = ngx_http_read_request_header(r);
+
+            if (n == NGX_AGAIN || n == NGX_ERROR) {
+                return;
+            }
+        }
+
+<<<<<<< HEAD
+        rc = ngx_http_parse_request_line(r, r->header_in);
+=======
+#if (NGX_WIN32)
+            {
+            u_char  *p, *last;
+
+            p = r->uri.data;
+            last = r->uri.data + r->uri.len;
+
+            while (p < last) {
+
+                if (*p++ == ':') {
+
+                    /*
+                     * this check covers "::$data", "::$index_allocation" and
+                     * ":$i30:$index_allocation"
+                     */
+
+                    if (p < last && *p == '$') {
+                        ngx_log_error(NGX_LOG_INFO, c->log, 0,
+                                      "client sent unsafe win32 URI");
+                        ngx_http_finalize_request(r, NGX_HTTP_BAD_REQUEST);
+                        return;
+                    }
+                }
+            }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
+
+        if (rc == NGX_OK) {
+
+            /* the request line has been parsed successfully */
+
+            r->request_line.len = r->request_end - r->request_start;
+            r->request_line.data = r->request_start;
+            r->request_length = r->header_in->pos - r->request_start;
+
             ngx_log_debug1(NGX_LOG_DEBUG_HTTP, c->log, 0,
                            "http request line: \"%V\"", &r->request_line);
 
+<<<<<<< HEAD
             r->method_name.len = r->method_end - r->request_start + 1;
             r->method_name.data = r->request_line.data;
 
             if (r->http_protocol.data) {
                 r->http_protocol.len = r->request_end - r->http_protocol.data;
+=======
+                break;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             }
 
             if (ngx_http_process_request_uri(r) != NGX_OK) {
@@ -1536,7 +1638,11 @@ ngx_http_alloc_large_header_buffer(ngx_http_request_t *r,
     }
 
     ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+<<<<<<< HEAD
                    "http large header copy: %uz", r->header_in->pos - old);
+=======
+                   "http large header copy: %d", r->header_in->pos - old);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     new = b->start;
 
@@ -2186,7 +2292,11 @@ ngx_http_find_virtual_server(ngx_connection_t *c,
 
 #endif /* NGX_HTTP_SSL && defined SSL_CTRL_SET_TLSEXT_HOSTNAME */
 
+<<<<<<< HEAD
         for (i = 0; i < virtual_names->nregex; i++) {
+=======
+    return NGX_DECLINED;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
             n = ngx_http_regex_exec(r, sn[i].regex, host);
 

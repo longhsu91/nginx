@@ -444,7 +444,11 @@ ngx_http_header_filter(ngx_http_request_t *r)
         b->last = ngx_copy(b->last, status_line->data, status_line->len);
 
     } else {
+<<<<<<< HEAD
         b->last = ngx_sprintf(b->last, "%03ui ", status);
+=======
+        b->last = ngx_sprintf(b->last, "%03ui", status);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
     *b->last++ = CR; *b->last++ = LF;
 

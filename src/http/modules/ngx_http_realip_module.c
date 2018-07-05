@@ -134,7 +134,10 @@ ngx_http_realip_handler(ngx_http_request_t *r)
     ngx_str_t                   *value;
     ngx_uint_t                   i, hash;
     ngx_addr_t                   addr;
+<<<<<<< HEAD
     ngx_array_t                 *xfwd;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_list_part_t             *part;
     ngx_table_elt_t             *header;
     ngx_connection_t            *c;
@@ -149,7 +152,11 @@ ngx_http_realip_handler(ngx_http_request_t *r)
 
     ctx = ngx_http_realip_get_module_ctx(r);
 
+<<<<<<< HEAD
     if (ctx) {
+=======
+    if (rlcf->from == NULL) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         return NGX_DECLINED;
     }
 
@@ -176,6 +183,7 @@ ngx_http_realip_handler(ngx_http_request_t *r)
 
         value = NULL;
 
+<<<<<<< HEAD
         break;
 
     case NGX_HTTP_REALIP_PROXY:
@@ -188,6 +196,8 @@ ngx_http_realip_handler(ngx_http_request_t *r)
 
         xfwd = NULL;
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         break;
 
     default: /* NGX_HTTP_REALIP_HEADER */
@@ -229,10 +239,16 @@ found:
 
     c = r->connection;
 
+<<<<<<< HEAD
+=======
+    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, c->log, 0, "realip: \"%s\"", ip);
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     addr.sockaddr = c->sockaddr;
     addr.socklen = c->socklen;
     /* addr.name = c->addr_text; */
 
+<<<<<<< HEAD
     if (ngx_http_get_forwarded_addr(r, &addr, xfwd, value, rlcf->from,
                                     rlcf->recursive)
         != NGX_DECLINED)
@@ -241,6 +257,12 @@ found:
             ngx_inet_set_port(addr.sockaddr, c->proxy_protocol_port);
         }
 
+=======
+    if (ngx_http_get_forwarded_addr(r, &addr, ip, len, rlcf->from,
+                                    rlcf->recursive)
+        == NGX_OK)
+    {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         return ngx_http_realip_set_addr(r, &addr);
     }
 
@@ -267,8 +289,12 @@ ngx_http_realip_set_addr(ngx_http_request_t *r, ngx_addr_t *addr)
 
     c = r->connection;
 
+<<<<<<< HEAD
     len = ngx_sock_ntop(addr->sockaddr, addr->socklen, text,
                         NGX_SOCKADDR_STRLEN, 0);
+=======
+    len = ngx_sock_ntop(addr->sockaddr, text, NGX_SOCKADDR_STRLEN, 0);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     if (len == 0) {
         return NGX_HTTP_INTERNAL_SERVER_ERROR;
     }
@@ -317,6 +343,7 @@ ngx_http_realip_from(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
     ngx_http_realip_loc_conf_t *rlcf = conf;
 
+<<<<<<< HEAD
     ngx_int_t             rc;
     ngx_str_t            *value;
     ngx_url_t             u;
@@ -326,6 +353,11 @@ ngx_http_realip_from(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 #if (NGX_HAVE_INET6)
     struct sockaddr_in6  *sin6;
 #endif
+=======
+    ngx_int_t                rc;
+    ngx_str_t               *value;
+    ngx_cidr_t              *cidr;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     value = cf->args->elts;
 
@@ -333,6 +365,7 @@ ngx_http_realip_from(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         rlcf->from = ngx_array_create(cf->pool, 2,
                                       sizeof(ngx_cidr_t));
         if (rlcf->from == NULL) {
+<<<<<<< HEAD
             return NGX_CONF_ERROR;
         }
     }
@@ -362,9 +395,12 @@ ngx_http_realip_from(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
         cidr = ngx_array_push(rlcf->from);
         if (cidr == NULL) {
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             return NGX_CONF_ERROR;
         }
 
+<<<<<<< HEAD
         *cidr = c;
 
         return NGX_CONF_OK;
@@ -379,10 +415,28 @@ ngx_http_realip_from(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
                                "%s in set_real_ip_from \"%V\"",
                                u.err, &u.host);
         }
+=======
+    cidr = ngx_array_push(rlcf->from);
+    if (cidr == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+#if (NGX_HAVE_UNIX_DOMAIN)
+
+    if (ngx_strcmp(value[1].data, "unix:") == 0) {
+         cidr->family = AF_UNIX;
+         return NGX_CONF_OK;
+    }
+
+#endif
+
+    rc = ngx_ptocidr(&value[1], cidr);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         return NGX_CONF_ERROR;
     }
 
+<<<<<<< HEAD
     cidr = ngx_array_push_n(rlcf->from, u.naddrs);
     if (cidr == NULL) {
         return NGX_CONF_ERROR;
@@ -411,6 +465,13 @@ ngx_http_realip_from(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         }
     }
 
+=======
+    if (rc == NGX_DONE) {
+        ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
+                           "low address bits of %V are meaningless", &value[1]);
+    }
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     return NGX_CONF_OK;
 }
 

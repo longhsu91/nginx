@@ -5,9 +5,14 @@
 # clang
 
 
+<<<<<<< HEAD
 NGX_CLANG_VER=`$CC -v 2>&1 | grep 'version' 2>&1 \
                            | sed -n -e 's/^.*clang version \(.*\)/\1/p' \
                                     -e 's/^.*LLVM version \(.*\)/\1/p'`
+=======
+NGX_CLANG_VER=`$CC -v 2>&1 | grep 'clang version' 2>&1 \
+                           | sed -e 's/^.*clang version \(.*\)/\1/'`
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 echo " + clang version: $NGX_CLANG_VER"
 
@@ -67,6 +72,15 @@ else
     PCRE_OPT="$PCRE_OPT -pipe"
 fi
 
+<<<<<<< HEAD
+=======
+if [ ".$MD5_OPT" = "." ]; then
+    MD5_OPT="-O2 -pipe $CPU_OPT"
+else
+    MD5_OPT="$MD5_OPT -pipe"
+fi
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 if [ ".$ZLIB_OPT" = "." ]; then
     ZLIB_OPT="-O2 -pipe $CPU_OPT"
 else
@@ -77,12 +91,16 @@ fi
 # warnings
 
 CFLAGS="$CFLAGS $NGX_CLANG_OPT -Wall -Wextra -Wpointer-arith"
+<<<<<<< HEAD
 CFLAGS="$CFLAGS -Wconditional-uninitialized"
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 #CFLAGS="$CFLAGS -Wmissing-prototypes"
 
 # we have a lot of unused function arguments
 CFLAGS="$CFLAGS -Wno-unused-parameter"
 
+<<<<<<< HEAD
 # deprecated system OpenSSL library on OS X
 if [ "$NGX_SYSTEM" = "Darwin" ]; then
     CFLAGS="$CFLAGS -Wno-deprecated-declarations"
@@ -90,6 +108,10 @@ fi
 
 # stop on warning
 CFLAGS="$CFLAGS -Werror"
+=======
+# stop on warning
+#CFLAGS="$CFLAGS -Werror"
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 # debug
 CFLAGS="$CFLAGS -g"

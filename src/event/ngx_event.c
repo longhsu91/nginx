@@ -912,6 +912,11 @@ ngx_events_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     if (*(void **) conf) {
         return "is duplicate";
     }
+<<<<<<< HEAD
+=======
+
+    /* count the number of the event modules and set up their indices */
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     /* count the number of the event modules and set up their indices */
 
@@ -1120,6 +1125,7 @@ ngx_event_debug_connection(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     ngx_memzero(&u, sizeof(ngx_url_t));
     u.host = value[1];
+<<<<<<< HEAD
 
     if (ngx_inet_resolve_host(cf->pool, &u) != NGX_OK) {
         if (u.err) {
@@ -1136,6 +1142,24 @@ ngx_event_debug_connection(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         return NGX_CONF_ERROR;
     }
 
+=======
+
+    if (ngx_inet_resolve_host(cf->pool, &u) != NGX_OK) {
+        if (u.err) {
+            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                               "%s in debug_connection \"%V\"",
+                               u.err, &u.host);
+        }
+
+        return NGX_CONF_ERROR;
+    }
+
+    cidr = ngx_array_push_n(&ecf->debug_connection, u.naddrs);
+    if (cidr == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_memzero(cidr, u.naddrs * sizeof(ngx_cidr_t));
 
     for (i = 0; i < u.naddrs; i++) {

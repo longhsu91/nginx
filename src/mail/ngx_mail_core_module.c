@@ -327,10 +327,51 @@ ngx_mail_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     for (i = 0; i < cmcf->listen.nelts; i++) {
 
+<<<<<<< HEAD
         if (ngx_cmp_sockaddr(&ls[i].sockaddr.sockaddr, ls[i].socklen,
                              (struct sockaddr *) &u.sockaddr, u.socklen, 1)
             != NGX_OK)
         {
+=======
+        sa = (struct sockaddr *) ls[i].sockaddr;
+
+        if (sa->sa_family != u.family) {
+            continue;
+        }
+
+        switch (sa->sa_family) {
+
+#if (NGX_HAVE_INET6)
+        case AF_INET6:
+            off = offsetof(struct sockaddr_in6, sin6_addr);
+            len = 16;
+            sin6 = (struct sockaddr_in6 *) sa;
+            port = sin6->sin6_port;
+            break;
+#endif
+
+#if (NGX_HAVE_UNIX_DOMAIN)
+        case AF_UNIX:
+            off = offsetof(struct sockaddr_un, sun_path);
+            len = sizeof(((struct sockaddr_un *) sa)->sun_path);
+            port = 0;
+            break;
+#endif
+
+        default: /* AF_INET */
+            off = offsetof(struct sockaddr_in, sin_addr);
+            len = 4;
+            sin = (struct sockaddr_in *) sa;
+            port = sin->sin_port;
+            break;
+        }
+
+        if (ngx_memcmp(ls[i].sockaddr + off, u.sockaddr + off, len) != 0) {
+            continue;
+        }
+
+        if (port != u.port) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             continue;
         }
 
@@ -355,6 +396,7 @@ ngx_mail_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ls->wildcard = u.wildcard;
     ls->ctx = cf->ctx;
 
+<<<<<<< HEAD
 #if (NGX_HAVE_INET6)
     ls->ipv6only = 1;
 #endif
@@ -411,6 +453,25 @@ ngx_mail_core_listen(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
                 ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                                    "invalid rcvbuf \"%V\"", &value[i]);
                 return NGX_CONF_ERROR;
+=======
+    if (cscf->protocol == NULL) {
+        for (m = 0; ngx_modules[m]; m++) {
+            if (ngx_modules[m]->type != NGX_MAIL_MODULE) {
+                continue;
+            }
+
+            module = ngx_modules[m]->ctx;
+
+            if (module->protocol == NULL) {
+                continue;
+            }
+
+            for (i = 0; module->protocol->port[i]; i++) {
+                if (module->protocol->port[i] == u.port) {
+                    cscf->protocol = module->protocol;
+                    break;
+                }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             }
 
             continue;

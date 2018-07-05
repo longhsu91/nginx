@@ -28,6 +28,31 @@ if [ "$CC" = cl ]; then
     NGX_CC_NAME=msvc
     echo " + using Microsoft Visual C++ compiler"
 
+<<<<<<< HEAD
+=======
+        NGX_CC_NAME=msvc10
+        echo " + using Microsoft Visual C++ 10 compiler"
+
+    elif `$NGX_WINE $CC -v 2>&1 \
+        | grep '^Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 14' \
+        >/dev/null 2>&1`; then
+
+        NGX_CC_NAME=msvc8
+        echo " + using Microsoft Visual C++ 8 compiler"
+
+    elif `$NGX_WINE $CC -v 2>&1 \
+        | grep '^Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 13' \
+        >/dev/null 2>&1`; then
+
+        NGX_CC_NAME=msvc7
+        echo " + using Microsoft Visual C++ 7 compiler"
+
+    else
+        NGX_CC_NAME=msvc
+        echo " + using Microsoft Visual C++ compiler"
+    fi
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 elif [ "$CC" = wcl386 ]; then
     NGX_CC_NAME=owc
     echo " + using Open Watcom C compiler"
@@ -48,10 +73,13 @@ elif `$CC -v 2>&1 | grep 'clang version' >/dev/null 2>&1`; then
     NGX_CC_NAME=clang
     echo " + using Clang C compiler"
 
+<<<<<<< HEAD
 elif `$CC -v 2>&1 | grep 'LLVM version' >/dev/null 2>&1`; then
     NGX_CC_NAME=clang
     echo " + using Clang C compiler"
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 elif `$CC -V 2>&1 | grep 'Sun C' >/dev/null 2>&1`; then
     NGX_CC_NAME=sunc
     echo " + using Sun C compiler"

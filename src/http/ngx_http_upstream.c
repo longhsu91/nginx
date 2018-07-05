@@ -778,12 +778,15 @@ found:
         return;
     }
 
+<<<<<<< HEAD
     u->upstream = uscf;
 
 #if (NGX_HTTP_SSL)
     u->ssl_name = uscf->host;
 #endif
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     if (uscf->peer.init(r, uscf) != NGX_OK) {
         ngx_http_upstream_finalize_request(r, u,
                                            NGX_HTTP_INTERNAL_SERVER_ERROR);
@@ -1173,7 +1176,10 @@ ngx_http_upstream_cache_check_range(ngx_http_request_t *r,
 static void
 ngx_http_upstream_resolve_handler(ngx_resolver_ctx_t *ctx)
 {
+<<<<<<< HEAD
     ngx_uint_t                     run_posted;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_connection_t              *c;
     ngx_http_request_t            *r;
     ngx_http_upstream_t           *u;
@@ -1244,9 +1250,13 @@ ngx_http_upstream_resolve_handler(ngx_resolver_ctx_t *ctx)
 
 failed:
 
+<<<<<<< HEAD
     if (run_posted) {
         ngx_http_run_posted_requests(c);
     }
+=======
+    ngx_http_run_posted_requests(c);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 }
 
 
@@ -4108,11 +4118,18 @@ ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u,
 
     if (u->peer.sockaddr) {
 
+<<<<<<< HEAD
         if (ft_type == NGX_HTTP_UPSTREAM_FT_HTTP_403
             || ft_type == NGX_HTTP_UPSTREAM_FT_HTTP_404)
         {
             state = NGX_PEER_NEXT;
 
+=======
+    if (u->peer.sockaddr) {
+
+        if (ft_type == NGX_HTTP_UPSTREAM_FT_HTTP_404) {
+            state = NGX_PEER_NEXT;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         } else {
             state = NGX_PEER_FAILED;
         }
@@ -4382,6 +4399,7 @@ ngx_http_upstream_finalize_request(ngx_http_request_t *r,
 
     r->connection->log->action = "sending to client";
 
+<<<<<<< HEAD
     if (!u->header_sent
         || rc == NGX_HTTP_REQUEST_TIME_OUT
         || rc == NGX_HTTP_CLIENT_CLOSED_REQUEST)
@@ -4399,6 +4417,14 @@ ngx_http_upstream_finalize_request(ngx_http_request_t *r,
 
     if (r->header_only
         || (u->pipe && u->pipe->downstream_error))
+=======
+    if (rc == 0
+        && !r->header_only
+#if (NGX_HTTP_CACHE)
+        && !r->cached
+#endif
+       )
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     {
         ngx_http_finalize_request(r, rc);
         return;

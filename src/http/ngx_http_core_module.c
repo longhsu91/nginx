@@ -2610,6 +2610,7 @@ ngx_http_set_disable_symlinks(ngx_http_request_t *r,
 
 ngx_int_t
 ngx_http_get_forwarded_addr(ngx_http_request_t *r, ngx_addr_t *addr,
+<<<<<<< HEAD
     ngx_array_t *headers, ngx_str_t *value, ngx_array_t *proxies,
     int recursive)
 {
@@ -2699,6 +2700,114 @@ ngx_http_get_forwarded_addr_internal(ngx_http_request_t *r, ngx_addr_t *addr,
     }
 
     return NGX_OK;
+=======
+    u_char *xff, size_t xfflen, ngx_array_t *proxies, int recursive)
+{
+    u_char           *p;
+    in_addr_t         inaddr;
+    ngx_addr_t        paddr;
+    ngx_cidr_t       *cidr;
+    ngx_uint_t        family, i;
+#if (NGX_HAVE_INET6)
+    ngx_uint_t        n;
+    struct in6_addr  *inaddr6;
+#endif
+
+#if (NGX_SUPPRESS_WARN)
+    inaddr = 0;
+#if (NGX_HAVE_INET6)
+    inaddr6 = NULL;
+#endif
+#endif
+
+    family = addr->sockaddr->sa_family;
+
+    if (family == AF_INET) {
+        inaddr = ((struct sockaddr_in *) addr->sockaddr)->sin_addr.s_addr;
+    }
+
+#if (NGX_HAVE_INET6)
+    else if (family == AF_INET6) {
+        inaddr6 = &((struct sockaddr_in6 *) addr->sockaddr)->sin6_addr;
+
+        if (IN6_IS_ADDR_V4MAPPED(inaddr6)) {
+            family = AF_INET;
+
+            p = inaddr6->s6_addr;
+
+            inaddr = p[12] << 24;
+            inaddr += p[13] << 16;
+            inaddr += p[14] << 8;
+            inaddr += p[15];
+
+            inaddr = htonl(inaddr);
+        }
+    }
+#endif
+
+    for (cidr = proxies->elts, i = 0; i < proxies->nelts; i++) {
+        if (cidr[i].family != family) {
+            goto next;
+        }
+
+        switch (family) {
+
+#if (NGX_HAVE_INET6)
+        case AF_INET6:
+            for (n = 0; n < 16; n++) {
+                if ((inaddr6->s6_addr[n] & cidr[i].u.in6.mask.s6_addr[n])
+                    != cidr[i].u.in6.addr.s6_addr[n])
+                {
+                    goto next;
+                }
+            }
+            break;
+#endif
+
+#if (NGX_HAVE_UNIX_DOMAIN)
+        case AF_UNIX:
+            break;
+#endif
+
+        default: /* AF_INET */
+            if ((inaddr & cidr[i].u.in.mask) != cidr[i].u.in.addr) {
+                goto next;
+            }
+            break;
+        }
+
+        for (p = xff + xfflen - 1; p > xff; p--, xfflen--) {
+            if (*p != ' ' && *p != ',') {
+                break;
+            }
+        }
+
+        for ( /* void */ ; p > xff; p--) {
+            if (*p == ' ' || *p == ',') {
+                p++;
+                break;
+            }
+        }
+
+        if (ngx_parse_addr(r->pool, &paddr, p, xfflen - (p - xff)) != NGX_OK) {
+            return NGX_DECLINED;
+        }
+
+        *addr = paddr;
+
+        if (recursive && p > xff) {
+            (void) ngx_http_get_forwarded_addr(r, addr, xff, p - 1 - xff,
+                                               proxies, 1);
+        }
+
+        return NGX_OK;
+
+    next:
+        continue;
+    }
+
+    return NGX_DECLINED;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 }
 
 
@@ -4684,6 +4793,89 @@ ngx_http_core_error_page(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
 
 static char *
+<<<<<<< HEAD
+=======
+ngx_http_core_try_files(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+{
+    ngx_http_core_loc_conf_t *clcf = conf;
+
+    ngx_str_t                  *value;
+    ngx_int_t                   code;
+    ngx_uint_t                  i, n;
+    ngx_http_try_file_t        *tf;
+    ngx_http_script_compile_t   sc;
+    ngx_http_core_main_conf_t  *cmcf;
+
+    if (clcf->try_files) {
+        return "is duplicate";
+    }
+
+    cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
+
+    cmcf->try_files = 1;
+
+    tf = ngx_pcalloc(cf->pool, cf->args->nelts * sizeof(ngx_http_try_file_t));
+    if (tf == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+    clcf->try_files = tf;
+
+    value = cf->args->elts;
+
+    for (i = 0; i < cf->args->nelts - 1; i++) {
+
+        tf[i].name = value[i + 1];
+
+        if (tf[i].name.data[tf[i].name.len - 1] == '/') {
+            tf[i].test_dir = 1;
+            tf[i].name.len--;
+            tf[i].name.data[tf[i].name.len] = '\0';
+        }
+
+        n = ngx_http_script_variables_count(&tf[i].name);
+
+        if (n) {
+            ngx_memzero(&sc, sizeof(ngx_http_script_compile_t));
+
+            sc.cf = cf;
+            sc.source = &tf[i].name;
+            sc.lengths = &tf[i].lengths;
+            sc.values = &tf[i].values;
+            sc.variables = n;
+            sc.complete_lengths = 1;
+            sc.complete_values = 1;
+
+            if (ngx_http_script_compile(&sc) != NGX_OK) {
+                return NGX_CONF_ERROR;
+            }
+
+        } else {
+            /* add trailing '\0' to length */
+            tf[i].name.len++;
+        }
+    }
+
+    if (tf[i - 1].name.data[0] == '=') {
+
+        code = ngx_atoi(tf[i - 1].name.data + 1, tf[i - 1].name.len - 2);
+
+        if (code == NGX_ERROR || code > 999) {
+            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                               "invalid code \"%*s\"",
+                               tf[i - 1].name.len - 1, tf[i - 1].name.data);
+            return NGX_CONF_ERROR;
+        }
+
+        tf[i].code = code;
+    }
+
+    return NGX_CONF_OK;
+}
+
+
+static char *
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 ngx_http_core_open_file_cache(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
     ngx_http_core_loc_conf_t *clcf = conf;

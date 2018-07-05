@@ -25,7 +25,11 @@
 #elif (NGX_HAVE_INET6)
 #define NGX_SOCKADDR_STRLEN   (NGX_INET6_ADDRSTRLEN + sizeof("[]:65535") - 1)
 #else
+<<<<<<< HEAD
 #define NGX_SOCKADDR_STRLEN   (NGX_INET_ADDRSTRLEN + sizeof(":65535") - 1)
+=======
+#define NGX_SOCKADDR_STRLEN   (NGX_INET6_ADDRSTRLEN + sizeof("[]:65535") - 1)
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 #endif
 
 /* compatibility */

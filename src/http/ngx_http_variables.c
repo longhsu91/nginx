@@ -105,8 +105,11 @@ static ngx_int_t ngx_http_variable_request_length(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
 static ngx_int_t ngx_http_variable_request_time(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
+<<<<<<< HEAD
 static ngx_int_t ngx_http_variable_request_id(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 static ngx_int_t ngx_http_variable_status(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data);
 
@@ -176,7 +179,11 @@ static ngx_http_variable_t  ngx_http_core_variables[] = {
 #endif
 
 #if (NGX_HTTP_X_FORWARDED_FOR)
+<<<<<<< HEAD
     { ngx_string("http_x_forwarded_for"), NULL, ngx_http_variable_headers,
+=======
+    { ngx_string("http_x_forwarded_for"), NULL, ngx_http_variable_header,
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
       offsetof(ngx_http_request_t, headers_in.x_forwarded_for), 0, 0 },
 #endif
 
@@ -286,10 +293,13 @@ static ngx_http_variable_t  ngx_http_core_variables[] = {
     { ngx_string("request_time"), NULL, ngx_http_variable_request_time,
       0, NGX_HTTP_VAR_NOCACHEABLE, 0 },
 
+<<<<<<< HEAD
     { ngx_string("request_id"), NULL,
       ngx_http_variable_request_id,
       0, 0, 0 },
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     { ngx_string("status"), NULL,
       ngx_http_variable_status, 0,
       NGX_HTTP_VAR_NOCACHEABLE, 0 },
@@ -407,10 +417,13 @@ ngx_http_add_variable(ngx_conf_t *cf, ngx_str_t *name, ngx_uint_t flags)
         return NULL;
     }
 
+<<<<<<< HEAD
     if (flags & NGX_HTTP_VAR_PREFIX) {
         return ngx_http_add_prefix_variable(cf, name, flags);
     }
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
 
     key = cmcf->variables_keys->keys.elts;
@@ -2134,7 +2147,11 @@ ngx_http_variable_request_time(ngx_http_request_t *r,
              ((tp->sec - r->start_sec) * 1000 + (tp->msec - r->start_msec));
     ms = ngx_max(ms, 0);
 
+<<<<<<< HEAD
     v->len = ngx_sprintf(p, "%T.%03M", (time_t) ms / 1000, ms % 1000) - p;
+=======
+    v->len = ngx_sprintf(p, "%T.%03M", ms / 1000, ms % 1000) - p;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     v->valid = 1;
     v->no_cacheable = 0;
     v->not_found = 0;
@@ -2145,6 +2162,7 @@ ngx_http_variable_request_time(ngx_http_request_t *r,
 
 
 static ngx_int_t
+<<<<<<< HEAD
 ngx_http_variable_request_id(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)
 {
@@ -2186,6 +2204,8 @@ ngx_http_variable_request_id(ngx_http_request_t *r,
 
 
 static ngx_int_t
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 ngx_http_variable_connection(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)
 {
@@ -2564,6 +2584,10 @@ ngx_http_regex_exec(ngx_http_request_t *r, ngx_http_regex_t *re, ngx_str_t *s)
 ngx_int_t
 ngx_http_variables_add_core_vars(ngx_conf_t *cf)
 {
+<<<<<<< HEAD
+=======
+    ngx_int_t                   rc;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_http_variable_t        *cv, *v;
     ngx_http_core_main_conf_t  *cmcf;
 
@@ -2584,12 +2608,29 @@ ngx_http_variables_add_core_vars(ngx_conf_t *cf)
         return NGX_ERROR;
     }
 
+<<<<<<< HEAD
     if (ngx_array_init(&cmcf->prefix_variables, cf->pool, 8,
                        sizeof(ngx_http_variable_t))
         != NGX_OK)
     {
         return NGX_ERROR;
     }
+=======
+    for (cv = ngx_http_core_variables; cv->name.len; cv++) {
+        v = ngx_palloc(cf->pool, sizeof(ngx_http_variable_t));
+        if (v == NULL) {
+            return NGX_ERROR;
+        }
+
+        *v = *cv;
+
+        rc = ngx_hash_add_key(cmcf->variables_keys, &v->name, v,
+                              NGX_HASH_READONLY_KEY);
+
+        if (rc == NGX_OK) {
+            continue;
+        }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     for (cv = ngx_http_core_variables; cv->name.len; cv++) {
         v = ngx_http_add_variable(cf, &cv->name, cv->flags);

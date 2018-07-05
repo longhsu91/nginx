@@ -1291,7 +1291,10 @@ ngx_http_image_filter_create_conf(ngx_conf_t *cf)
      *     conf->hcv = NULL;
      *     conf->acv = NULL;
      *     conf->jqcv = NULL;
+<<<<<<< HEAD
      *     conf->wqcv = NULL;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
      *     conf->shcv = NULL;
      */
 
@@ -1330,6 +1333,7 @@ ngx_http_image_filter_merge_conf(ngx_conf_t *cf, void *parent, void *child)
     }
 
     if (conf->jpeg_quality == NGX_CONF_UNSET_UINT) {
+<<<<<<< HEAD
 
         /* 75 is libjpeg default quality */
         ngx_conf_merge_uint_value(conf->jpeg_quality, prev->jpeg_quality, 75);
@@ -1346,6 +1350,14 @@ ngx_http_image_filter_merge_conf(ngx_conf_t *cf, void *parent, void *child)
 
         if (conf->wqcv == NULL) {
             conf->wqcv = prev->wqcv;
+=======
+
+        /* 75 is libjpeg default quality */
+        ngx_conf_merge_uint_value(conf->jpeg_quality, prev->jpeg_quality, 75);
+
+        if (conf->jqcv == NULL) {
+            conf->jqcv = prev->jqcv;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         }
     }
 

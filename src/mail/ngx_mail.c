@@ -231,8 +231,22 @@ ngx_mail_add_ports(ngx_conf_t *cf, ngx_array_t *ports,
     ngx_mail_conf_port_t  *port;
     ngx_mail_conf_addr_t  *addr;
 
+<<<<<<< HEAD
     sa = &listen->sockaddr.sockaddr;
     p = ngx_inet_get_port(sa);
+=======
+#if (NGX_HAVE_UNIX_DOMAIN)
+    case AF_UNIX:
+        p = 0;
+        break;
+#endif
+
+    default: /* AF_INET */
+        sin = (struct sockaddr_in *) sa;
+        p = sin->sin_port;
+        break;
+    }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     port = ports->elts;
     for (i = 0; i < ports->nelts; i++) {
@@ -491,12 +505,20 @@ ngx_mail_cmp_conf_addrs(const void *one, const void *two)
         return 1;
     }
 
+<<<<<<< HEAD
     if (second->opt.wildcard) {
+=======
+    if (second->wildcard) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         /* a wildcard must be the last resort, shift it to the end */
         return -1;
     }
 
+<<<<<<< HEAD
     if (first->opt.bind && !second->opt.bind) {
+=======
+    if (first->bind && !second->bind) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         /* shift explicit bind()ed addresses to the start */
         return -1;
     }

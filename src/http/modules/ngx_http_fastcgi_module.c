@@ -1325,10 +1325,13 @@ ngx_http_fastcgi_reinit_request(ngx_http_request_t *r)
     f->fastcgi_stdout = 0;
     f->large_stderr = 0;
 
+<<<<<<< HEAD
     if (f->split_parts) {
         f->split_parts->nelts = 0;
     }
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     r->state = 0;
 
     return NGX_OK;

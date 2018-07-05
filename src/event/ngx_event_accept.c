@@ -38,6 +38,11 @@ ngx_event_accept(ngx_event_t *ev)
 
         ev->timedout = 0;
     }
+<<<<<<< HEAD
+=======
+
+    ecf = ngx_event_get_conf(ngx_cycle->conf_ctx, ngx_event_core_module);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     ecf = ngx_event_get_conf(ngx_cycle->conf_ctx, ngx_event_core_module);
 
@@ -107,7 +112,11 @@ ngx_event_accept(ngx_event_t *ev)
             }
 
             if (err == NGX_EMFILE || err == NGX_ENFILE) {
+<<<<<<< HEAD
                 if (ngx_disable_accept_events((ngx_cycle_t *) ngx_cycle, 1)
+=======
+                if (ngx_disable_accept_events((ngx_cycle_t *) ngx_cycle)
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
                     != NGX_OK)
                 {
                     return;
@@ -281,6 +290,7 @@ ngx_event_accept(ngx_event_t *ev)
         ngx_str_t  addr;
         u_char     text[NGX_SOCKADDR_STRLEN];
 
+<<<<<<< HEAD
         ngx_debug_accepted_connection(ecf, c);
 
         if (log->log_level & NGX_LOG_DEBUG_EVENT) {
@@ -290,6 +300,58 @@ ngx_event_accept(ngx_event_t *ev)
 
             ngx_log_debug3(NGX_LOG_DEBUG_EVENT, log, 0,
                            "*%uA accept: %V fd:%d", c->number, &addr, s);
+=======
+        struct sockaddr_in   *sin;
+        ngx_cidr_t           *cidr;
+        ngx_uint_t            i;
+#if (NGX_HAVE_INET6)
+        struct sockaddr_in6  *sin6;
+        ngx_uint_t            n;
+#endif
+
+        cidr = ecf->debug_connection.elts;
+        for (i = 0; i < ecf->debug_connection.nelts; i++) {
+            if (cidr[i].family != c->sockaddr->sa_family) {
+                goto next;
+            }
+
+            switch (cidr[i].family) {
+
+#if (NGX_HAVE_INET6)
+            case AF_INET6:
+                sin6 = (struct sockaddr_in6 *) c->sockaddr;
+                for (n = 0; n < 16; n++) {
+                    if ((sin6->sin6_addr.s6_addr[n]
+                        & cidr[i].u.in6.mask.s6_addr[n])
+                        != cidr[i].u.in6.addr.s6_addr[n])
+                    {
+                        goto next;
+                    }
+                }
+                break;
+#endif
+
+#if (NGX_HAVE_UNIX_DOMAIN)
+            case AF_UNIX:
+                break;
+#endif
+
+            default: /* AF_INET */
+                sin = (struct sockaddr_in *) c->sockaddr;
+                if ((sin->sin_addr.s_addr & cidr[i].u.in.mask)
+                    != cidr[i].u.in.addr)
+                {
+                    goto next;
+                }
+                break;
+            }
+
+            log->log_level = NGX_LOG_DEBUG_CONNECTION|NGX_LOG_DEBUG_ALL;
+            break;
+
+        next:
+            continue;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         }
 
         }
@@ -365,9 +427,21 @@ ngx_enable_accept_events(ngx_cycle_t *cycle)
 
         c = ls[i].connection;
 
+<<<<<<< HEAD
         if (c == NULL || c->read->active) {
             continue;
         }
+=======
+        if (c->read->active) {
+            continue;
+        }
+
+        if (ngx_event_flags & NGX_USE_RTSIG_EVENT) {
+
+            if (ngx_add_conn(c) == NGX_ERROR) {
+                return NGX_ERROR;
+            }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         if (ngx_add_event(c->read, NGX_READ_EVENT, 0) == NGX_ERROR) {
             return NGX_ERROR;

@@ -8,13 +8,21 @@ if [ $ZLIB != NONE ]; then
 
     case "$NGX_CC_NAME" in
 
+<<<<<<< HEAD
         msvc | owc | bcc)
+=======
+        msvc* | owc* | bcc)
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             have=NGX_ZLIB . auto/have
             LINK_DEPS="$LINK_DEPS $ZLIB/zlib.lib"
             CORE_LIBS="$CORE_LIBS $ZLIB/zlib.lib"
         ;;
 
+<<<<<<< HEAD
         icc)
+=======
+        icc*)
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             have=NGX_ZLIB . auto/have
             LINK_DEPS="$LINK_DEPS $ZLIB/libz.a"
 

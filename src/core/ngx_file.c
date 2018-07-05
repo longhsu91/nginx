@@ -864,7 +864,11 @@ ngx_copy_file(u_char *from, u_char *to, ngx_copy_file_t *cf)
 
         if ((size_t) n != len) {
             ngx_log_error(NGX_LOG_ALERT, cf->log, 0,
+<<<<<<< HEAD
                           ngx_read_fd_n " has read only %z of %O from %s",
+=======
+                          ngx_read_fd_n " has read only %z of %uz from %s",
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
                           n, size, from);
             goto failed;
         }
@@ -879,7 +883,11 @@ ngx_copy_file(u_char *from, u_char *to, ngx_copy_file_t *cf)
 
         if ((size_t) n != len) {
             ngx_log_error(NGX_LOG_ALERT, cf->log, 0,
+<<<<<<< HEAD
                           ngx_write_fd_n " has written only %z of %O to %s",
+=======
+                          ngx_write_fd_n " has written only %z of %uz to %s",
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
                           n, size, to);
             goto failed;
         }

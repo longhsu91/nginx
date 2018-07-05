@@ -110,8 +110,12 @@ ngx_http_map_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v,
 {
     ngx_http_map_ctx_t  *map = (ngx_http_map_ctx_t *) data;
 
+<<<<<<< HEAD
     ngx_str_t                   val, str;
     ngx_http_complex_value_t   *cv;
+=======
+    ngx_str_t                   val;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_http_variable_value_t  *value;
 
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
@@ -380,6 +384,7 @@ ngx_http_map_cmp_dns_wildcards(const void *one, const void *two)
 static char *
 ngx_http_map(ngx_conf_t *cf, ngx_command_t *dummy, void *conf)
 {
+<<<<<<< HEAD
     u_char                            *data;
     size_t                             len;
     ngx_int_t                          rv;
@@ -389,6 +394,13 @@ ngx_http_map(ngx_conf_t *cf, ngx_command_t *dummy, void *conf)
     ngx_http_complex_value_t           cv, *cvp;
     ngx_http_variable_value_t         *var, **vp;
     ngx_http_compile_complex_value_t   ccv;
+=======
+    ngx_int_t                   rc, index;
+    ngx_str_t                  *value, name;
+    ngx_uint_t                  i, key;
+    ngx_http_map_conf_ctx_t    *ctx;
+    ngx_http_variable_value_t  *var, **vp;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     ctx = cf->ctx;
 
@@ -416,6 +428,42 @@ ngx_http_map(ngx_conf_t *cf, ngx_command_t *dummy, void *conf)
 
     if (ngx_strcmp(value[0].data, "include") == 0) {
         return ngx_conf_include(cf, dummy, conf);
+<<<<<<< HEAD
+=======
+    }
+
+    if (value[1].data[0] == '$') {
+        name = value[1];
+        name.len--;
+        name.data++;
+
+        index = ngx_http_get_variable_index(ctx->cf, &name);
+        if (index == NGX_ERROR) {
+            return NGX_CONF_ERROR;
+        }
+
+        var = ctx->var_values.elts;
+
+        for (i = 0; i < ctx->var_values.nelts; i++) {
+            if (index == (ngx_int_t) var[i].data) {
+                var = &var[i];
+                goto found;
+            }
+        }
+
+        var = ngx_array_push(&ctx->var_values);
+        if (var == NULL) {
+            return NGX_CONF_ERROR;
+        }
+
+        var->valid = 0;
+        var->no_cacheable = 0;
+        var->not_found = 0;
+        var->len = 0;
+        var->data = (u_char *) index;
+
+        goto found;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
 
     key = 0;

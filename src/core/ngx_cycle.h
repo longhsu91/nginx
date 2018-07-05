@@ -58,11 +58,14 @@ struct ngx_cycle_s {
 
     ngx_array_t               listening;
     ngx_array_t               paths;
+<<<<<<< HEAD
 
     ngx_array_t               config_dump;
     ngx_rbtree_t              config_dump_rbtree;
     ngx_rbtree_node_t         config_dump_sentinel;
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     ngx_list_t                open_files;
     ngx_list_t                shared_memory;
 

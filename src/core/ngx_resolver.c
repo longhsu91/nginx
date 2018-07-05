@@ -114,9 +114,14 @@ static void *ngx_resolver_calloc(ngx_resolver_t *r, size_t size);
 static void ngx_resolver_free(ngx_resolver_t *r, void *p);
 static void ngx_resolver_free_locked(ngx_resolver_t *r, void *p);
 static void *ngx_resolver_dup(ngx_resolver_t *r, void *src, size_t size);
+<<<<<<< HEAD
 static ngx_resolver_addr_t *ngx_resolver_export(ngx_resolver_t *r,
     ngx_resolver_node_t *rn, ngx_uint_t rotate);
 static void ngx_resolver_report_srv(ngx_resolver_t *r, ngx_resolver_ctx_t *ctx);
+=======
+static in_addr_t *ngx_resolver_rotate(ngx_resolver_t *r, in_addr_t *src,
+    ngx_uint_t n);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 static u_char *ngx_resolver_log_error(ngx_log_t *log, u_char *buf, size_t len);
 static void ngx_resolver_resolve_srv_names(ngx_resolver_ctx_t *ctx,
     ngx_resolver_node_t *rn);
@@ -134,6 +139,7 @@ static ngx_resolver_node_t *ngx_resolver_lookup_addr6(ngx_resolver_t *r,
 ngx_resolver_t *
 ngx_resolver_create(ngx_conf_t *cf, ngx_str_t *names, ngx_uint_t n)
 {
+<<<<<<< HEAD
     ngx_str_t                   s;
     ngx_url_t                   u;
     ngx_uint_t                  i, j;
@@ -143,6 +149,17 @@ ngx_resolver_create(ngx_conf_t *cf, ngx_str_t *names, ngx_uint_t n)
 
     r = ngx_pcalloc(cf->pool, sizeof(ngx_resolver_t));
     if (r == NULL) {
+=======
+    ngx_str_t              s;
+    ngx_url_t              u;
+    ngx_uint_t             i, j;
+    ngx_resolver_t        *r;
+    ngx_pool_cleanup_t    *cln;
+    ngx_udp_connection_t  *uc;
+
+    cln = ngx_pool_cleanup_add(cf->pool, 0);
+    if (cln == NULL) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         return NULL;
     }
 
@@ -151,12 +168,15 @@ ngx_resolver_create(ngx_conf_t *cf, ngx_str_t *names, ngx_uint_t n)
         return NULL;
     }
 
+<<<<<<< HEAD
     cln = ngx_pool_cleanup_add(cf->pool, 0);
     if (cln == NULL) {
         return NULL;
     }
 
     cln->handler = ngx_resolver_cleanup;
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     cln->data = r;
 
     ngx_rbtree_init(&r->name_rbtree, &r->name_sentinel,
@@ -202,8 +222,13 @@ ngx_resolver_create(ngx_conf_t *cf, ngx_str_t *names, ngx_uint_t n)
     r->log_level = NGX_LOG_ERR;
 
     if (n) {
+<<<<<<< HEAD
         if (ngx_array_init(&r->connections, cf->pool, n,
                            sizeof(ngx_resolver_connection_t))
+=======
+        if (ngx_array_init(&r->udp_connections, cf->pool, n,
+                           sizeof(ngx_udp_connection_t))
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             != NGX_OK)
         {
             return NULL;
@@ -260,6 +285,7 @@ ngx_resolver_create(ngx_conf_t *cf, ngx_str_t *names, ngx_uint_t n)
             return NULL;
         }
 
+<<<<<<< HEAD
         rec = ngx_array_push_n(&r->connections, u.naddrs);
         if (rec == NULL) {
             return NULL;
@@ -278,6 +304,20 @@ ngx_resolver_create(ngx_conf_t *cf, ngx_str_t *names, ngx_uint_t n)
     if (n && r->connections.nelts == 0) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "no name servers defined");
         return NULL;
+=======
+        uc = ngx_array_push_n(&r->udp_connections, u.naddrs);
+        if (uc == NULL) {
+            return NULL;
+        }
+
+        ngx_memzero(uc, u.naddrs * sizeof(ngx_udp_connection_t));
+
+        for (j = 0; j < u.naddrs; j++) {
+            uc[j].sockaddr = u.addrs[j].sockaddr;
+            uc[j].socklen = u.addrs[j].socklen;
+            uc[j].server = u.addrs[j].name;
+        }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
 
     return r;
@@ -635,8 +675,14 @@ ngx_resolve_name_locked(ngx_resolver_t *r, ngx_resolver_ctx_t *ctx,
                 if (naddrs == 1 && rn->naddrs == 1) {
                     addrs = NULL;
 
+<<<<<<< HEAD
                 } else {
                     addrs = ngx_resolver_export(r, rn, 1);
+=======
+                if (naddrs != 1) {
+                    addr = 0;
+                    addrs = ngx_resolver_rotate(r, rn->u.addrs, naddrs);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
                     if (addrs == NULL) {
                         return NGX_ERROR;
                     }
@@ -749,9 +795,12 @@ ngx_resolve_name_locked(ngx_resolver_t *r, ngx_resolver_ctx_t *ctx,
         if (rn->query) {
             ngx_resolver_free_locked(r, rn->query);
             rn->query = NULL;
+<<<<<<< HEAD
 #if (NGX_HAVE_INET6)
             rn->query6 = NULL;
 #endif
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         }
 
         if (rn->cnlen) {
@@ -1500,10 +1549,13 @@ ngx_resolver_resend(ngx_resolver_t *r, ngx_rbtree_t *tree, ngx_queue_t *queue)
 
         if (rn->waiting) {
 
+<<<<<<< HEAD
             if (++rn->last_connection == r->connections.nelts) {
                 rn->last_connection = 0;
             }
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
             (void) ngx_resolver_send_query(r, rn);
 
             rn->expire = now + r->resend_timeout;
@@ -1710,7 +1762,11 @@ ngx_resolver_process_response(ngx_resolver_t *r, u_char *buf, size_t n,
     trunc = flags & 0x0200;
 
     ngx_log_debug6(NGX_LOG_DEBUG_CORE, r->log, 0,
+<<<<<<< HEAD
                    "resolver DNS response %ui fl:%04Xi %ui/%ui/%ud/%ud",
+=======
+                   "resolver DNS response %ui fl:%04Xui %ui/%ui/%ud/%ud",
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
                    ident, flags, nqs, nan,
                    (response->nns_hi << 8) + response->nns_lo,
                    (response->nar_hi << 8) + response->nar_lo);
@@ -2811,6 +2867,9 @@ ngx_resolver_process_srv(ngx_resolver_t *r, u_char *buf, size_t n,
             ngx_resolver_resolve_srv_names(ctx, rn);
         }
 
+        ngx_resolver_free(r, rn->query);
+        rn->query = NULL;
+
         return;
     }
 
@@ -2871,7 +2930,12 @@ ngx_resolver_process_srv(ngx_resolver_t *r, u_char *buf, size_t n,
             (void) ngx_resolve_name_locked(r, ctx, &name);
         }
 
+<<<<<<< HEAD
         /* unlock name mutex */
+=======
+        ngx_resolver_free(r, rn->query);
+        rn->query = NULL;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         return;
     }
@@ -3660,11 +3724,19 @@ ngx_resolver_create_name_query(ngx_resolver_t *r, ngx_resolver_node_t *rn,
     p--;
     *p-- = '\0';
 
+<<<<<<< HEAD
     if (name->len == 0)  {
         return NGX_DECLINED;
     }
 
     for (s = name->data + name->len - 1; s >= name->data; s--) {
+=======
+    if (ctx->name.len == 0)  {
+        return NGX_DECLINED;
+    }
+
+    for (s = ctx->name.data + ctx->name.len - 1; s >= ctx->name.data; s--) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         if (*s != '.') {
             *p = *s;
             len++;
@@ -4142,6 +4214,7 @@ ngx_resolver_dup(ngx_resolver_t *r, void *src, size_t size)
 }
 
 
+<<<<<<< HEAD
 static ngx_resolver_addr_t *
 ngx_resolver_export(ngx_resolver_t *r, ngx_resolver_node_t *rn,
     ngx_uint_t rotate)
@@ -4220,11 +4293,35 @@ ngx_resolver_export(ngx_resolver_t *r, ngx_resolver_node_t *rn,
         } while (++i < n);
     }
 #endif
+=======
+static in_addr_t *
+ngx_resolver_rotate(ngx_resolver_t *r, in_addr_t *src, ngx_uint_t n)
+{
+    void        *dst, *p;
+    ngx_uint_t   j;
+
+    dst = ngx_resolver_alloc(r, n * sizeof(in_addr_t));
+
+    if (dst == NULL) {
+        return dst;
+    }
+
+    j = ngx_random() % n;
+
+    if (j == 0) {
+        ngx_memcpy(dst, src, n * sizeof(in_addr_t));
+        return dst;
+    }
+
+    p = ngx_cpymem(dst, &src[j], (n - j) * sizeof(in_addr_t));
+    ngx_memcpy(p, src, j * sizeof(in_addr_t));
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     return dst;
 }
 
 
+<<<<<<< HEAD
 static void
 ngx_resolver_report_srv(ngx_resolver_t *r, ngx_resolver_ctx_t *ctx)
 {
@@ -4326,6 +4423,8 @@ next_srv:
 }
 
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 char *
 ngx_resolver_strerror(ngx_int_t err)
 {
@@ -4381,7 +4480,11 @@ ngx_udp_connect(ngx_resolver_connection_t *rec)
     ngx_socket_t       s;
     ngx_connection_t  *c;
 
+<<<<<<< HEAD
     s = ngx_socket(rec->sockaddr->sa_family, SOCK_DGRAM, 0);
+=======
+    s = ngx_socket(uc->sockaddr->sa_family, SOCK_DGRAM, 0);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     ngx_log_debug1(NGX_LOG_DEBUG_EVENT, &rec->log, 0, "UDP socket %d", s);
 

@@ -31,6 +31,12 @@ static ssize_t sendfilev(int fd, const struct sendfilevec *vec,
 
 ngx_chain_t *ngx_solaris_sendfilev_chain(ngx_connection_t *c, ngx_chain_t *in,
     off_t limit);
+<<<<<<< HEAD
+=======
+
+#endif
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 #endif
 

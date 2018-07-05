@@ -794,6 +794,7 @@ ngx_http_sub_filter(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ngx_http_sub_pair_t               *pair;
     ngx_http_compile_complex_value_t   ccv;
 
+<<<<<<< HEAD
     value = cf->args->elts;
 
     if (value[1].len == 0) {
@@ -807,6 +808,10 @@ ngx_http_sub_filter(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         if (slcf->pairs == NULL) {
             return NGX_CONF_ERROR;
         }
+=======
+    if (slcf->match.data) {
+        return "is duplicate";
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
 
     if (slcf->pairs->nelts == 255) {
@@ -892,7 +897,15 @@ ngx_http_sub_merge_conf(ngx_conf_t *cf, void *parent, void *child)
     ngx_http_sub_loc_conf_t  *conf = child;
 
     ngx_conf_merge_value(conf->once, prev->once, 1);
+<<<<<<< HEAD
     ngx_conf_merge_value(conf->last_modified, prev->last_modified, 0);
+=======
+    ngx_conf_merge_str_value(conf->match, prev->match, "");
+
+    if (conf->value.value.data == NULL) {
+        conf->value = prev->value;
+    }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     if (ngx_http_merge_types(cf, &conf->types_keys, &conf->types,
                              &prev->types_keys, &prev->types,

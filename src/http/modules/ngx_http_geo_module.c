@@ -190,6 +190,7 @@ ngx_http_geo_cidr_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v,
                   ngx_radix32tree_find(ctx->u.trees.tree, INADDR_NONE);
         goto done;
     }
+<<<<<<< HEAD
 
     switch (addr.sockaddr->sa_family) {
 
@@ -219,6 +220,37 @@ ngx_http_geo_cidr_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v,
         sin = (struct sockaddr_in *) addr.sockaddr;
         inaddr = ntohl(sin->sin_addr.s_addr);
 
+=======
+
+    switch (addr.sockaddr->sa_family) {
+
+#if (NGX_HAVE_INET6)
+    case AF_INET6:
+        inaddr6 = &((struct sockaddr_in6 *) addr.sockaddr)->sin6_addr;
+        p = inaddr6->s6_addr;
+
+        if (IN6_IS_ADDR_V4MAPPED(inaddr6)) {
+            inaddr = p[12] << 24;
+            inaddr += p[13] << 16;
+            inaddr += p[14] << 8;
+            inaddr += p[15];
+
+            vv = (ngx_http_variable_value_t *)
+                      ngx_radix32tree_find(ctx->u.trees.tree, inaddr);
+
+        } else {
+            vv = (ngx_http_variable_value_t *)
+                      ngx_radix128tree_find(ctx->u.trees.tree6, p);
+        }
+
+        break;
+#endif
+
+    default: /* AF_INET */
+        sin = (struct sockaddr_in *) addr.sockaddr;
+        inaddr = ntohl(sin->sin_addr.s_addr);
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         vv = (ngx_http_variable_value_t *)
                   ngx_radix32tree_find(ctx->u.trees.tree, inaddr);
 
@@ -314,17 +346,30 @@ static ngx_int_t
 ngx_http_geo_addr(ngx_http_request_t *r, ngx_http_geo_ctx_t *ctx,
     ngx_addr_t *addr)
 {
+<<<<<<< HEAD
     ngx_array_t  *xfwd;
+=======
+    ngx_table_elt_t  *xfwd;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     if (ngx_http_geo_real_addr(r, ctx, addr) != NGX_OK) {
         return NGX_ERROR;
     }
 
+<<<<<<< HEAD
     xfwd = &r->headers_in.x_forwarded_for;
 
     if (xfwd->nelts > 0 && ctx->proxies != NULL) {
         (void) ngx_http_get_forwarded_addr(r, addr, xfwd, NULL,
                                            ctx->proxies, ctx->proxy_recursive);
+=======
+    xfwd = r->headers_in.x_forwarded_for;
+
+    if (xfwd != NULL && ctx->proxies != NULL) {
+        (void) ngx_http_get_forwarded_addr(r, addr, xfwd->value.data,
+                                           xfwd->value.len, ctx->proxies,
+                                           ctx->proxy_recursive);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     }
 
     return NGX_OK;
@@ -512,6 +557,12 @@ ngx_http_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
         var->get_handler = ngx_http_geo_range_variable;
         var->data = (uintptr_t) geo;
+<<<<<<< HEAD
+=======
+
+        ngx_destroy_pool(ctx.temp_pool);
+        ngx_destroy_pool(pool);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     } else {
         if (ctx.tree == NULL) {
@@ -522,6 +573,20 @@ ngx_http_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         }
 
         geo->u.trees.tree = ctx.tree;
+<<<<<<< HEAD
+=======
+
+#if (NGX_HAVE_INET6)
+        if (ctx.tree6 == NULL) {
+            ctx.tree6 = ngx_radix_tree_create(cf->pool, -1);
+            if (ctx.tree6 == NULL) {
+                return NGX_CONF_ERROR;
+            }
+        }
+
+        geo->u.trees.tree6 = ctx.tree6;
+#endif
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 #if (NGX_HAVE_INET6)
         if (ctx.tree6 == NULL) {
@@ -534,9 +599,12 @@ ngx_http_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         geo->u.trees.tree6 = ctx.tree6;
 #endif
 
+<<<<<<< HEAD
         var->get_handler = ngx_http_geo_cidr_variable;
         var->data = (uintptr_t) geo;
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         if (ngx_radix32tree_insert(ctx.tree, 0, 0,
                                    (uintptr_t) &ngx_http_variable_null_value)
             == NGX_ERROR)
@@ -551,7 +619,11 @@ ngx_http_geo_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
                                     (uintptr_t) &ngx_http_variable_null_value)
             == NGX_ERROR)
         {
+<<<<<<< HEAD
             goto failed;
+=======
+            return NGX_CONF_ERROR;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         }
 #endif
     }
@@ -1117,6 +1189,7 @@ ngx_http_geo_cidr(ngx_conf_t *cf, ngx_http_geo_conf_ctx_t *ctx,
             rc = ngx_radix32tree_delete(ctx->tree, cidr.u.in.addr,
                                         cidr.u.in.mask);
             break;
+<<<<<<< HEAD
         }
 
         if (rc != NGX_OK) {
@@ -1124,6 +1197,15 @@ ngx_http_geo_cidr(ngx_conf_t *cf, ngx_http_geo_conf_ctx_t *ctx,
                                "no network \"%V\" to delete", net);
         }
 
+=======
+        }
+
+        if (rc != NGX_OK) {
+            ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
+                               "no network \"%V\" to delete", net);
+        }
+
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         return NGX_CONF_OK;
     }
 
@@ -1152,6 +1234,7 @@ ngx_http_geo_cidr_add(ngx_conf_t *cf, ngx_http_geo_conf_ctx_t *ctx,
                                      cidr->u.in6.mask.s6_addr,
                                      (uintptr_t) val);
 
+<<<<<<< HEAD
         if (rc == NGX_OK) {
             return NGX_CONF_OK;
         }
@@ -1190,6 +1273,57 @@ ngx_http_geo_cidr_add(ngx_conf_t *cf, ngx_http_geo_conf_ctx_t *ctx,
         rc = ngx_radix32tree_insert(ctx->tree, cidr->u.in.addr,
                                     cidr->u.in.mask, (uintptr_t) val);
 
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
+        if (rc == NGX_OK) {
+            return NGX_CONF_OK;
+        }
+
+        if (rc == NGX_ERROR) {
+            return NGX_CONF_ERROR;
+        }
+
+        /* rc == NGX_BUSY */
+
+        old = (ngx_http_variable_value_t *)
+<<<<<<< HEAD
+                   ngx_radix32tree_find(ctx->tree, cidr->u.in.addr);
+=======
+                   ngx_radix128tree_find(ctx->tree6,
+                                         cidr->u.in6.addr.s6_addr);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
+
+        ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
+              "duplicate network \"%V\", value: \"%v\", old value: \"%v\"",
+              net, val, old);
+
+<<<<<<< HEAD
+        rc = ngx_radix32tree_delete(ctx->tree,
+                                    cidr->u.in.addr, cidr->u.in.mask);
+=======
+        rc = ngx_radix128tree_delete(ctx->tree6,
+                                     cidr->u.in6.addr.s6_addr,
+                                     cidr->u.in6.mask.s6_addr);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
+
+        if (rc == NGX_ERROR) {
+            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "invalid radix tree");
+            return NGX_CONF_ERROR;
+        }
+
+<<<<<<< HEAD
+=======
+        rc = ngx_radix128tree_insert(ctx->tree6, cidr->u.in6.addr.s6_addr,
+                                     cidr->u.in6.mask.s6_addr,
+                                     (uintptr_t) val);
+
+        break;
+#endif
+
+    default: /* AF_INET */
+        rc = ngx_radix32tree_insert(ctx->tree, cidr->u.in.addr,
+                                    cidr->u.in.mask, (uintptr_t) val);
+
         if (rc == NGX_OK) {
             return NGX_CONF_OK;
         }
@@ -1215,6 +1349,7 @@ ngx_http_geo_cidr_add(ngx_conf_t *cf, ngx_http_geo_conf_ctx_t *ctx,
             return NGX_CONF_ERROR;
         }
 
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         rc = ngx_radix32tree_insert(ctx->tree, cidr->u.in.addr,
                                     cidr->u.in.mask, (uintptr_t) val);
 

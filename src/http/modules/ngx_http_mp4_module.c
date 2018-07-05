@@ -2936,7 +2936,17 @@ found:
 
         ngx_mp4_set_32value(entry->samples, samples);
 
+<<<<<<< HEAD
     } else if (chunk_samples && start) {
+=======
+    if (trak->chunk_samples && next_chunk - trak->start_chunk == 2) {
+
+        /* last chunk in the entry */
+
+        ngx_mp4_set_32value(entry->samples, samples - trak->chunk_samples);
+
+    } else if (trak->chunk_samples) {
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
         first = &trak->stsc_start_chunk_entry;
         ngx_mp4_set_32value(first->chunk, 1);
@@ -2952,7 +2962,13 @@ found:
 
         ngx_mp4_set_32value(entry->chunk, trak->start_chunk + 2);
 
+<<<<<<< HEAD
         trak->sample_to_chunk_entries++;
+=======
+        entries++;
+        atom_size += sizeof(ngx_mp4_stsc_entry_t);
+    }
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
     } else if (chunk_samples) {
 

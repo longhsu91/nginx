@@ -176,9 +176,23 @@ ngx_http_headers_filter(ngx_http_request_t *r)
 
     conf = ngx_http_get_module_loc_conf(r, ngx_http_headers_filter_module);
 
+<<<<<<< HEAD
     if (conf->expires == NGX_HTTP_EXPIRES_OFF
         && conf->headers == NULL
         && conf->trailers == NULL)
+=======
+    if ((conf->expires == NGX_HTTP_EXPIRES_OFF && conf->headers == NULL)
+        || r != r->main
+        || (r->headers_out.status != NGX_HTTP_OK
+            && r->headers_out.status != NGX_HTTP_CREATED
+            && r->headers_out.status != NGX_HTTP_NO_CONTENT
+            && r->headers_out.status != NGX_HTTP_PARTIAL_CONTENT
+            && r->headers_out.status != NGX_HTTP_MOVED_PERMANENTLY
+            && r->headers_out.status != NGX_HTTP_MOVED_TEMPORARILY
+            && r->headers_out.status != NGX_HTTP_SEE_OTHER
+            && r->headers_out.status != NGX_HTTP_NOT_MODIFIED
+            && r->headers_out.status != NGX_HTTP_TEMPORARY_REDIRECT))
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     {
         return ngx_http_next_header_filter(r);
     }

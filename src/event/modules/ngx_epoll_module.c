@@ -91,6 +91,10 @@ struct io_event {
 };
 
 
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 #endif
 #endif /* NGX_TEST_BUILD_EPOLL */
 

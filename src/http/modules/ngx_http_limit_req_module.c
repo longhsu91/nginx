@@ -463,10 +463,18 @@ ngx_http_limit_req_lookup(ngx_http_limit_req_limit_t *limit, ngx_uint_t hash,
 
     lr = (ngx_http_limit_req_node_t *) &node->color;
 
+<<<<<<< HEAD
     lr->len = (u_short) key->len;
+=======
+    lr->len = (u_char) len;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
     lr->excess = 0;
 
     ngx_memcpy(lr->data, key->data, key->len);
+
+    ngx_rbtree_insert(&ctx->sh->rbtree, node);
+
+    ngx_queue_insert_head(&ctx->sh->queue, &lr->queue);
 
     ngx_rbtree_insert(&ctx->sh->rbtree, node);
 

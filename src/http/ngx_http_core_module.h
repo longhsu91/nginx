@@ -526,8 +526,12 @@ ngx_int_t ngx_http_set_disable_symlinks(ngx_http_request_t *r,
     ngx_http_core_loc_conf_t *clcf, ngx_str_t *path, ngx_open_file_info_t *of);
 
 ngx_int_t ngx_http_get_forwarded_addr(ngx_http_request_t *r, ngx_addr_t *addr,
+<<<<<<< HEAD
     ngx_array_t *headers, ngx_str_t *value, ngx_array_t *proxies,
     int recursive);
+=======
+    u_char *xff, size_t xfflen, ngx_array_t *proxies, int recursive);
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
 
 
 extern ngx_module_t  ngx_http_core_module;

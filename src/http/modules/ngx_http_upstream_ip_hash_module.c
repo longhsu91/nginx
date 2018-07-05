@@ -177,6 +177,7 @@ ngx_http_upstream_get_ip_hash_peer(ngx_peer_connection_t *pc, void *data)
 
     for ( ;; ) {
 
+<<<<<<< HEAD
         for (i = 0; i < (ngx_uint_t) iphp->addrlen; i++) {
             hash = (hash * 113 + iphp->addr[i]) % 6271;
         }
@@ -189,6 +190,26 @@ ngx_http_upstream_get_ip_hash_peer(ngx_peer_connection_t *pc, void *data)
             w -= peer->weight;
             peer = peer->next;
             p++;
+=======
+        for (i = 0; i < iphp->addrlen; i++) {
+            hash = (hash * 113 + iphp->addr[i]) % 6271;
+        }
+
+        if (!iphp->rrp.peers->weighted) {
+            p = hash % iphp->rrp.peers->number;
+
+        } else {
+            w = hash % iphp->rrp.peers->total_weight;
+
+            for (i = 0; i < iphp->rrp.peers->number; i++) {
+                w -= iphp->rrp.peers->peer[i].weight;
+                if (w < 0) {
+                    break;
+                }
+            }
+
+            p = i;
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
         }
 
         n = p / (8 * sizeof(uintptr_t));
@@ -269,7 +290,10 @@ ngx_http_upstream_ip_hash(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     uscf->flags = NGX_HTTP_UPSTREAM_CREATE
                   |NGX_HTTP_UPSTREAM_WEIGHT
+<<<<<<< HEAD
                   |NGX_HTTP_UPSTREAM_MAX_CONNS
+=======
+>>>>>>> 8889e00f335b588a51a2d1f0e5352b3ef5a4dff9
                   |NGX_HTTP_UPSTREAM_MAX_FAILS
                   |NGX_HTTP_UPSTREAM_FAIL_TIMEOUT
                   |NGX_HTTP_UPSTREAM_DOWN;
